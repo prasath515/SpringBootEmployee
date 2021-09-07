@@ -1,6 +1,8 @@
 package com.employee.model;
 
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,32 +13,34 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
 @Table(name = "employee")
-public class Employee{
+public class Employee implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@Expose private long id;
 
 	@Column(name = "first_name", nullable = false, length = 50)
-	private String firstName;
+	@Expose private String firstName;
 
 	@Column(name = "last_name", length = 50)
-	private String lastName;
+	@Expose private String lastName;
 	
 	@Column(unique = true, length = 70)
-	private String email;
+	@Expose private String email;
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "employee")
-	private Salary salary;
+	@Expose private Salary salary;
 
 	public Salary getSalary() {
 		return salary;

@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.employee.Exception.ResourceNotFoundException;
 import com.employee.model.Employee;
+import com.employee.model.Salary;
 import com.employee.repository.EmployeeRepository;
+import com.employee.repository.SalaryRepository;
 import com.employee.service.EmployeeService;
 
 @Service
@@ -15,9 +17,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private EmployeeRepository employeeRespository;
 
+	@Autowired
+	private SalaryRepository salaryRepository;
+
+	@Autowired
+	private Salary salary;
+
 	@Override
 	public Employee saveEmployee(Employee employee) {
-		return employeeRespository.save(employee);
+		salary = employee.getSalary();
+		salary.setEmployee(employeeRespository.save(employee));
+		salaryRepository.save(salary);
+		return employee;
 	}
 
 	@Override
@@ -48,21 +59,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public Employee updateEmployee(Employee employee, long id) {
 		Employee existingEmployee = employeeRespository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee", "Id", id));
-		
+
 		existingEmployee.setEmail(employee.getEmail());
 		existingEmployee.setFirstName(employee.getFirstName());
 		existingEmployee.setLastName(employee.getLastName());
-		
-		return employeeRespository.save(existingEmployee);
+		employeeRespository.save(existingEmployee);
+		salary = employee.getSalary();
+		salary.setEmployee(existingEmployee);
+		salaryRepository.save(salary);
+		return employee;
 	}
-	
+
 	@Override
 	public void deleteEmployeeById(long id) {
-		// Checking employee exists 
-		employeeRespository.findById(id)
-		.orElseThrow(() -> new ResourceNotFoundException("Employee", "Id", id));
-		
+		// Checking employee exists
+		employeeRespository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee", "Id", id));
+
 		employeeRespository.deleteById(id);
-		
+
 	}
 }

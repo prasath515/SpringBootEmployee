@@ -1,5 +1,7 @@
 package com.employee.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,31 +16,40 @@ import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.google.gson.annotations.Expose;
 
 @Component
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "salary")
-public class Salary{
+public class Salary implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	@Expose private long id;
 
 	@Column(name = "monthly_amount")
-	private double monthlyAmount;
+	@Expose private double monthlyAmount;
 
 	@Column(name = "annual_amount")
-	private double annualPackage;
+	@Expose private double annualPackage;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JoinColumn(name = "employee_id", referencedColumnName = "id",foreignKey = @ForeignKey(name="emp_sal_fk"))
 	private Employee employee;
+	
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 	
 
 	public long getId() {
@@ -61,13 +72,5 @@ public class Salary{
 		this.annualPackage = annualPackage;
 	}
 
-	public Employee getEmployee() {
-		return employee;
-	}
-
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
-	}
-	
 	
 }
